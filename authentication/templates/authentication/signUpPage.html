@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Criar Conta</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+</head>
+
+<body class="bg-gray-50 flex items-center justify-center min-h-screen">
+  <div class="bg-white shadow-lg rounded-lg p-8 w-96">
+    <h1 class="text-3xl font-semibold text-center mb-6 text-orange-700">Criar Conta</h1>
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="mb-4">
+        <label for="id_username" class="block text-sm font-medium text-gray-700">Username</label>
+        <input type="text" name="username" id="id_username" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md 
+                              focus:outline-none focus:ring focus:ring-orange-500" />
+        {% if form.username.errors %}
+        <div class="text-red-500 text-sm mt-1">
+          {% for error in form.username.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label for="id_email" class="block text-sm font-medium text-gray-700">Email</label>
+        <input type="email" name="email" id="id_email" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md 
+                              focus:outline-none focus:ring focus:ring-orange-500" />
+        {% if form.email.errors %}
+        <div class="text-red-500 text-sm mt-1">
+          {% for error in form.email.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4 relative">
+        <label for="id_password1" class="block text-sm font-medium text-gray-700">Senha</label>
+        <div class="flex items-center">
+          <input type="password" name="password1" id="id_password1" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md 
+                              focus:outline-none focus:ring focus:ring-orange-500" />
+          <span id="togglePassword1" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+            <i style="margin-top: 1.45rem;" class="fas fa-eye" id="eyeIcon1"></i>
+          </span>
+        </div>
+        {% if form.password1.errors %}
+        <div class="text-red-500 text-sm mt-1">
+          {% for error in form.password1.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4 relative">
+        <label for="id_password2" class="block text-sm font-medium text-gray-700">Confirme a Senha</label>
+        <div class="flex items-center">
+          <input type="password" name="password2" id="id_password2" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md 
+                              focus:outline-none focus:ring focus:ring-orange-500" />
+          <span id="togglePassword2" class="absolute inset-y-0 right-0 flex items-center pr-3 cursor-pointer">
+            <i style="margin-top: 1.45rem;" class="fas fa-eye" id="eyeIcon2"></i>
+          </span>
+        </div>
+        {% if form.password2.errors %}
+        <div class="text-red-500 text-sm mt-1">
+          {% for error in form.password2.errors %}
+          <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="w-full bg-orange-700 text-white p-2 rounded-md hover:bg-orange-800 focus:outline-none">
+        Criar Conta
+      </button>
+
+      <p class="mt-4 text-center">
+        Já tem conta? <a href="{% url 'signInPage' %}" class="text-orange-700 hover:underline">Entre aqui</a>
+      </p>
+    </form>
+  </div>
+
+  <script>
+    const togglePassword1 = document.getElementById('togglePassword1');
+    const passwordInput1 = document.getElementById('id_password1');
+    const eyeIcon1 = document.getElementById('eyeIcon1');
+
+    const togglePassword2 = document.getElementById('togglePassword2');
+    const passwordInput2 = document.getElementById('id_password2');
+    const eyeIcon2 = document.getElementById('eyeIcon2');
+
+    togglePassword1.addEventListener('click', function () {
+      const type = passwordInput1.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput1.setAttribute('type', type);
+      eyeIcon1.classList.toggle('fa-eye');
+      eyeIcon1.classList.toggle('fa-eye-slash');
+    });
+
+    togglePassword2.addEventListener('click', function () {
+      const type = passwordInput2.getAttribute('type') === 'password' ? 'text' : 'password';
+      passwordInput2.setAttribute('type', type);
+      eyeIcon2.classList.toggle('fa-eye');
+      eyeIcon2.classList.toggle('fa-eye-slash');
+    });
+  </script>
+</body>
+
+</html>
