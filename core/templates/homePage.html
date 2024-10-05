@@ -5,6 +5,54 @@ Início
 {% endblock title %}
 
 {% block main %}
-    <h1 class="text-3xl">Snapzo HomePage</h1>
+{% if messages %}
+<div id="message"
+    class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-6 rounded-lg shadow-lg mb-4 text-center z-50">
+    {% for message in messages %}
+    <p class="text-sm font-semibold">{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
 
+<div class="max-w-md mx-auto my-5">
+    <form method="post" class="bg-white p-6 rounded-lg shadow-md">
+        {% csrf_token %}
+        <textarea name="content" placeholder="Escreva seu post aqui..."
+            class="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+            required></textarea>
+        <button type="submit"
+            class="mt-3 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition">Postar</button>
+    </form>
+</div>
+
+<div class="max-w-md mx-auto my-5">
+    <h2 class="text-2xl font-semibold mb-4">Posts Recentes</h2>
+    {% for post_data in posts %}
+    <div
+        class="bg-white border border-gray-300 rounded-lg shadow-md p-6 mb-4 transition-transform transform hover:scale-105">
+        <p class="text-lg font-bold text-blue-600">{{ post_data.post.user.username }} - <span
+                class="font-normal text-gray-500">{{ post_data.time_since }}</span></p>
+        <p class="text-content">{{ post_data.post.content }}</p>
+    </div>
+    {% empty %}
+    <p class="text-gray-500 text-center">Não há posts disponíveis.</p>
+    {% endfor %}
+</div>
+
+<style>
+    .text-content {
+        max-width: 45ch;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+</style>
+
+<script>
+    setTimeout(() => {
+        const message = document.getElementById('message');
+        if (message) {
+            message.style.display = 'none';
+        }
+    }, 5000);
+</script>
 {% endblock main %}
