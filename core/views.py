@@ -1,10 +1,13 @@
 from django.http import Http404
 from django.shortcuts import render, redirect
-from django.views.generic import ListView
+from django.views.generic import *
 from django.contrib import messages
 from posts.models import Post
 from .forms import PostForm
 from .utils.timeUtils import time_since  
+from django.db.models import Q
+from posts.models import Post
+from django.contrib.auth.models import User
 
 class HomePageView(ListView):
     model = Post
@@ -39,3 +42,26 @@ class HomePageView(ListView):
             post.save()
             return redirect('homePage')
         return self.get(request, *args, **kwargs)
+
+
+class ExplorerPageView(TemplateView):
+    template_name = 'explorer/explorerPage.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('query', '')
+
+        # Inicializar listas para usuários e posts
+        users = []
+        posts = []
+
+        # Buscar usuários
+        if query:
+            users = User.objects.filter(username__icontains=query)
+            # Buscar posts relacionados ao usuário
+            posts = Post.objects.filter(Q(content__icontains=query) | Q(user__username__icontains=query))
+
+        context['query'] = query  # Adicionar a query ao contexto
+        context['users'] = users
+        context['posts'] = posts
+        return context
