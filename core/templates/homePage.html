@@ -28,12 +28,14 @@ Início
 <div class="max-w-md mx-auto my-5">
     <h2 class="text-2xl font-semibold mb-4">Posts Recentes</h2>
     {% for post_data in posts %}
-    <div
-        class="bg-white border border-gray-300 rounded-lg shadow-md p-6 mb-4 transition-transform transform hover:scale-105">
-        <p class="text-lg font-bold text-blue-600">{{ post_data.post.user.username }} - <span
-                class="font-normal text-gray-500">{{ post_data.time_since }}</span></p>
-        <p class="text-content">{{ post_data.post.content }}</p>
-    </div>
+    <a href="#" class="block">
+        <div
+            class="bg-white border border-gray-300 rounded-lg shadow-md p-6 mb-4 transition-transform transform hover:scale-105">
+            <p class="text-lg font-bold text-blue-600">{{ post_data.post.user.username }} - <span
+                    class="font-normal text-gray-500">{{ post_data.time_since }}</span></p>
+            <p class="text-content">{{ post_data.post.content }}</p>
+        </div>
+    </a>
     {% empty %}
     <p class="text-gray-500 text-center">Não há posts disponíveis.</p>
     {% endfor %}

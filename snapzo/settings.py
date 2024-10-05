@@ -74,14 +74,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'snapzo.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'snapzo_db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'snapzo',
+        'USER': 'root',
+        'PASSWORD': 'alunoifro',
+        'HOST': 'localhost',
+        'PORT': '3306'
     }
 }
 

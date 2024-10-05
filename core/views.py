@@ -1,8 +1,9 @@
+from django.http import Http404
 from django.shortcuts import render, redirect
-from django.views.generic import *
+from django.views.generic import ListView
 from django.contrib import messages
 from posts.models import Post
-from .forms import *
+from .forms import PostForm
 from .utils.timeUtils import time_since  
 
 class HomePageView(ListView):
@@ -10,6 +11,10 @@ class HomePageView(ListView):
     template_name = "homePage.html"
     context_object_name = 'posts'
     ordering = ['-created_at']
+
+    def get_queryset(self):
+        # Retorna todos os posts, independentemente do número
+        return Post.objects.all()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

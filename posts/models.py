@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 class Post(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)  # UUIDField
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='posts')
     content = models.TextField(verbose_name='Conteúdo')
 
@@ -19,8 +19,8 @@ class Post(models.Model):
         verbose_name='Status'
     )
     
-    view_count = models.PositiveIntegerField(default=0, verbose_name='Visualizações')
-    like_count = models.PositiveIntegerField(default=0, verbose_name='Curtidas')
+    view_count = models.PositiveIntegerField(default=0, verbose_name='Visualizações')  # Padrão 0
+    like_count = models.PositiveIntegerField(default=0, verbose_name='Curtidas')      # Padrão 0
 
     def post_image_path(instance, filename):
         return f'posts_images/{instance.user.username}/{slugify(filename)}'
@@ -37,15 +37,3 @@ class Post(models.Model):
 
     def __str__(self):
         return f'Post de {self.user.username}'
-
-    @property
-    def is_public(self):
-        return self.is_published == self.Status.PUBLIC
-
-    def increment_view_count(self):
-        self.view_count += 1
-        self.save(update_fields=['view_count'])
-
-    def increment_like_count(self):
-        self.like_count += 1
-        self.save(update_fields=['like_count'])
