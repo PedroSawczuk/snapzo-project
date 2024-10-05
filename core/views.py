@@ -42,7 +42,16 @@ class HomePageView(ListView):
             post.save()
             return redirect('homePage')
         return self.get(request, *args, **kwargs)
+    
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'posts/detailPost.html'
+    context_object_name = 'post'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['time_since'] = time_since(self.object.created_at)
+        return context
 
 class ExplorerPageView(TemplateView):
     template_name = 'explorer/explorerPage.html'

@@ -28,7 +28,7 @@ Início
 <div class="max-w-md mx-auto my-5">
     <h2 class="text-2xl font-semibold mb-4">Posts Recentes</h2>
     {% for post_data in posts %}
-    <a href="#" class="block">
+    <a href="{% url 'postDetailPage' post_data.post.id %}" class="block"> <!-- Link para detalhes -->
         <div
             class="bg-white border border-gray-300 rounded-lg shadow-md p-6 mb-4 transition-transform transform hover:scale-105">
             <p class="text-lg font-bold text-blue-600">{{ post_data.post.user.username }} - <span
@@ -40,6 +40,7 @@ Início
     <p class="text-gray-500 text-center">Não há posts disponíveis.</p>
     {% endfor %}
 </div>
+
 
 <style>
     .text-content {

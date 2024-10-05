@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Detalhes do Post
+{% endblock title %}
+
+{% block main %}
+<div class="max-w-xl mx-auto my-5 p-6 bg-white rounded-lg shadow-md">
+    <h2 class="text-3xl font-bold mb-4 text-blue-600">{{ post.user.username }}</h2>
+    <p class="text-lg text-gray-800 mb-4">{{ post.content }}</p>
+    <div class="border-t border-gray-300 mt-4 pt-4">
+        <p class="text-gray-500"><strong>Criado há:</strong> {{ time_since }} - {{ post.created_at|date:"d/m/Y H:i" }}</p>
+    </div>
+</div>
+{% endblock main %}
