@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Editar Perfil
+{% endblock title %}
+
+{% block main %}
+<div class="max-w-md mx-auto my-10">
+    <h2 class="text-3xl font-semibold text-center text-blue-600 mb-6">Editar Perfil de {{ user.username }}</h2>
+    <form id="editProfileForm" method="post" class="bg-white p-8 rounded-lg shadow-lg border border-gray-300">
+        {% csrf_token %}
+
+        <!-- Exibir erros de validação -->
+        {% if form.errors %}
+            <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-600 rounded-lg">
+                <ul>
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 gap-6">
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2" for="username">Usuário:</label>
+                <input type="text" id="username" name="username" value="{{ form.username.value }}" 
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                       required maxlength="150" placeholder="Seu nome de usuário" />
+                <p class="text-gray-500 text-sm mt-1">Obrigatório. 150 caracteres ou menos. Letras, números e @/./+/-/_ apenas.</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-gray-700 font-semibold mb-2" for="email">Endereço de email:</label>
+                <input type="email" id="email" name="email" value="{{ form.email.value }}" 
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                       required placeholder="Seu endereço de email" />
+            </div>
+        </div>
+
+        <button type="submit" 
+                onclick="return confirm('Deseja mudar seu perfil?')" 
+                class="mt-6 w-full bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition ease-in-out duration-200 shadow-md">Salvar Alterações</button>
+    </form>
+</div>
+{% endblock main %}

@@ -28,6 +28,20 @@ Perfil de {{ user.username }} | Snapzo
                 <p class="text-lg text-gray-600 mt-2">
                     <span class="font-bold">{{ post_count }}</span> Posts publicados
                 </p>
+
+                <!-- Botões "Editar perfil" ou "Seguir" -->
+                {% if user == request.user %}
+                    <a href="{% url 'editProfilePage' %}" class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4 inline-block hover:bg-blue-600 transition">
+                        Editar perfil
+                    </a>
+                {% else %}
+                    <form action="#" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg mt-4 inline-block hover:bg-green-600 transition">
+                            Seguir
+                        </button>
+                    </form>
+                {% endif %}
             </div>
         </div>
     </div>
