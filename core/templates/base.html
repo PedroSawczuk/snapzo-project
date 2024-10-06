@@ -50,9 +50,9 @@
             </div>
 
             <div class="flex items-center space-x-4">
-                {% if user.is_authenticated %}
+                {% if current_user.is_authenticated %}
                 <span class="text-zinc-600 text-lg font-medium">
-                    <a href="{% url 'userProfilePage' user.id %}" class="hover:text-orange-700">{{ user.username }}</a>
+                    <a href="{% url 'userProfilePage' current_user.id %}" class="hover:text-orange-700">{{ current_user.username }}</a>
                 </span>
                 <form action="{% url 'logoutPage' %}" method="post">
                     {% csrf_token %}
@@ -64,14 +64,11 @@
                     class="bg-orange-700 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-800 transition transform hover:scale-105 duration-200">Entrar</a>
                 {% endif %}
             </div>
-
-
         </div>
     </nav>
 
     {% block main %}
     {% endblock main %}
-
 </body>
 
 </html>

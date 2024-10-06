@@ -88,8 +88,9 @@ class UserProfileView(DetailView):
                 'time_since': time_since(post.created_at)  
             } for post in posts
         ]
+        context['current_user'] = self.request.user  # Adicione isso para passar o usuário autenticado
         return context
-    
+
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
