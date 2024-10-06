@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}
+Perfil de {{ user.username }} | Snapzo
+{% endblock title %}
+
+{% block main %}
+<!-- Mensagem de feedback -->
+{% if messages %}
+<div id="message"
+    class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-6 rounded-lg shadow-lg mb-4 text-center z-50">
+    {% for message in messages %}
+    <p class="text-sm font-semibold">{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="max-w-md mx-auto my-5">
+    <!-- Informações do Usuário -->
+    <div class="bg-white shadow rounded-lg p-6 mb-6">
+        <div class="flex items-center space-x-6">
+            <div class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-2xl font-semibold">
+                {{ user.username|slice:":1" }}  <!-- Inicial do nome do usuário -->
+            </div>
+            <div>
+                <h1 class="text-3xl font-semibold text-gray-800">{{ user.username }}</h1>
+                <p class="text-gray-500">Membro desde {{ user.date_joined|date:"d M Y" }}</p>
+                <p class="text-lg text-gray-600 mt-2">
+                    <span class="font-bold">{{ post_count }}</span> Posts publicados
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Seção de Posts -->
+<div class="max-w-md mx-auto my-5">
+    <h2 class="text-2xl font-semibold mb-4">Posts Recentes</h2>
+    {% for post_data in posts %}
+    <a href="{% url 'postDetailPage' post_data.post.id %}" class="block"> <!-- Link para detalhes -->
+        <div
+            class="bg-white border border-gray-300 rounded-lg shadow-md p-6 mb-4 transition-transform transform hover:scale-105">
+            <p class="text-lg font-bold text-blue-600">{{ post_data.post.user.username }} - 
+                <span class="font-normal text-gray-500">{{ post_data.time_since }}</span>
+            </p>
+            <p class="text-content">{{ post_data.post.content }}</p>
+        </div>
+    </a>
+    {% empty %}
+    <p class="text-gray-500 text-center">Não há posts disponíveis.</p>
+    {% endfor %}
+</div>
+
+<style>
+    .text-content {
+        max-width: 45ch;
+        white-space: normal;
+        word-wrap: break-word;
+    }
+</style>
+
+<script>
+    setTimeout(() => {
+        const message = document.getElementById('message');
+        if (message) {
+            message.style.display = 'none';
+        }
+    }, 5000);
+</script>
+{% endblock main %}

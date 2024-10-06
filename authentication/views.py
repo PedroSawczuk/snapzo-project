@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import FormView
 from .forms import SignupForm, SigninForm
 
-class SignupView(FormView):
+class SignUpView    (FormView):
     template_name = 'authentication/signUpPage.html'
     form_class = SignupForm
     success_url = reverse_lazy('signInPage')  
@@ -17,7 +17,7 @@ class SignupView(FormView):
         user.groups.add(group) 
         return super().form_valid(form)
 
-class SigninView(FormView):
+class SignInView(FormView):
     template_name = 'authentication/signInPage.html'
     form_class = SigninForm
     success_url = reverse_lazy('homePage')  

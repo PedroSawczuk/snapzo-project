@@ -74,3 +74,20 @@ class ExplorerPageView(TemplateView):
         context['users'] = users
         context['posts'] = posts
         return context
+    
+class UserProfileView(DetailView):
+    model = User
+    template_name = 'users/userProfilePage.html'
+    context_object_name = 'user'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        posts = Post.objects.filter(user=self.object).order_by('-created_at')
+        context['post_count'] = posts.count()
+        context['posts'] = [
+            {
+                'post': post,
+                'time_since': time_since(post.created_at)  
+            } for post in posts
+        ]
+        return context

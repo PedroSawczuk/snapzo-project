@@ -51,16 +51,21 @@
 
             <div class="flex items-center space-x-4">
                 {% if user.is_authenticated %}
-                <span class="text-zinc-600 text-lg font-medium">{{ user.username }}</span>
+                <span class="text-zinc-600 text-lg font-medium">
+                    <a href="{% url 'userProfilePage' user.id %}" class="hover:text-orange-700">{{ user.username }}</a>
+                </span>
                 <form action="{% url 'logoutPage' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition transform hover:scale-105 duration-200">Sair</button>
-                </form> 
+                    <button type="submit"
+                        class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition transform hover:scale-105 duration-200">Sair</button>
+                </form>
                 {% else %}
                 <a href="{% url 'signInPage' %}"
                     class="bg-orange-700 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-800 transition transform hover:scale-105 duration-200">Entrar</a>
                 {% endif %}
             </div>
+
+
         </div>
     </nav>
 
