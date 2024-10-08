@@ -10,4 +10,7 @@ urlpatterns = [
     path('posts/<uuid:pk>/', PostDetailView.as_view(), name='postDetailPage'),  
     path('posts/edit/<uuid:pk>/', EditPostView.as_view(), name='editPost'),
     path('posts/delete/<uuid:pk>/', DeletePostView.as_view(), name='delPost'),  
+
+    path('like/<uuid:post_id>/', LikePostView.as_view(), name='likePost'),  
+
 ]

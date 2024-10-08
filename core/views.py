@@ -1,9 +1,9 @@
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import *
 from django.contrib import messages
-from posts.models import Post
+from posts.models import Like, Post
 from .forms import PostForm, UserProfileForm
 from .utils.timeUtils import time_since  
 from django.db.models import Q
@@ -52,7 +52,9 @@ class PostDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['time_since'] = time_since(self.object.created_at)
+        context['has_liked'] = self.request.user.is_authenticated and self.object.likes.filter(user=self.request.user).exists()
         return context
+
 
 class ExplorerPageView(TemplateView):
     template_name = 'explorer/explorerPage.html'
@@ -92,7 +94,6 @@ class UserProfileView(DetailView):
         context['current_user'] = self.request.user if self.request.user.is_authenticated else None
         return context
 
-
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = User
     form_class = UserProfileForm
@@ -122,3 +123,19 @@ class DeletePostView(LoginRequiredMixin, DeleteView):
     def get_queryset(self):
         # Apenas permitir que o autor do post exclua
         return Post.objects.filter(user=self.request.user)
+    
+class LikePostView(LoginRequiredMixin, View):
+    def post(self, request, post_id):
+        post = Post.objects.get(id=post_id)
+        like, created = Like.objects.get_or_create(user=request.user, post=post)
+        if not created:
+            like.delete()  # Unlike the post if it was already liked
+            action = 'unliked'
+        else:
+            action = 'liked'
+        
+        # Optionally, update like_count on the Post
+        post.like_count = post.likes.count()
+        post.save()
+        
+        return JsonResponse({'action': action, 'like_count': post.like_count})
