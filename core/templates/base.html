@@ -19,49 +19,45 @@
             <div class="flex items-center space-x-4">
                 <div class="text-3xl font-bold text-zinc-600">Snapzo</div>
             </div>
-
+    
             <div class="flex-grow mx-8">
                 <ul class="flex justify-center space-x-12">
                     <li>
-                        <a href="{% url 'homePage' %}"
-                            class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
+                        <a href="{% url 'homePage' %}" class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
                             <i class="fas fa-home mr-2"></i> Início
                         </a>
                     </li>
                     <li>
-                        <a href="{% url 'explorerPage' %}"
-                            class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
+                        <a href="{% url 'explorerPage' %}" class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
                             <i class="fas fa-compass mr-2"></i> Explorar
                         </a>
                     </li>
+                    {% if request.user.is_authenticated %}
                     <li>
-                        <a href="#"
-                            class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
+                        <a href="#" class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
                             <i class="fas fa-bell mr-2"></i> Notificações
                         </a>
                     </li>
                     <li>
-                        <a href="#"
-                            class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
+                        <a href="#" class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
                             <i class="fa-solid fa-message mr-2"></i> Mensagens
                         </a>
                     </li>
+                    {% endif %}
                 </ul>
             </div>
-
+    
             <div class="flex items-center space-x-4">
-                {% if current_user.is_authenticated %}
+                {% if request.user.is_authenticated %}
                 <span class="text-zinc-600 text-lg font-medium">
-                    <a href="{% url 'userProfilePage' current_user.id %}" class="hover:text-orange-700">{{ current_user.username }}</a>
+                    <a href="{% url 'userProfilePage' request.user.id %}" class="hover:text-orange-700">{{ request.user.username }}</a>
                 </span>
                 <form action="{% url 'logoutPage' %}" method="post">
                     {% csrf_token %}
-                    <button type="submit"
-                        class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition transform hover:scale-105 duration-200">Sair</button>
+                    <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded-lg shadow hover:bg-red-600 transition transform hover:scale-105 duration-200">Sair</button>
                 </form>
                 {% else %}
-                <a href="{% url 'signInPage' %}"
-                    class="bg-orange-700 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-800 transition transform hover:scale-105 duration-200">Entrar</a>
+                <a href="{% url 'signInPage' %}" class="bg-orange-700 text-white px-4 py-2 rounded-lg shadow hover:bg-orange-800 transition transform hover:scale-105 duration-200">Entrar</a>
                 {% endif %}
             </div>
         </div>

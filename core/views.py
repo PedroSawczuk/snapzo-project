@@ -88,8 +88,10 @@ class UserProfileView(DetailView):
                 'time_since': time_since(post.created_at)  
             } for post in posts
         ]
-        context['current_user'] = self.request.user  # Adicione isso para passar o usuário autenticado
+        # Passar o usuário autenticado para o template
+        context['current_user'] = self.request.user if self.request.user.is_authenticated else None
         return context
+
 
 class EditProfileView(LoginRequiredMixin, UpdateView):
     model = User
@@ -102,3 +104,21 @@ class EditProfileView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('userProfilePage', kwargs={'pk': self.request.user.pk}) 
+    
+class EditPostView(LoginRequiredMixin, UpdateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'posts/editPost.html'  
+    success_url = reverse_lazy('homePage')
+
+    def get_queryset(self):
+        return Post.objects.filter(user=self.request.user)
+    
+class DeletePostView(LoginRequiredMixin, DeleteView):
+    model = Post
+    template_name = 'posts/deletePost.html'  # Crie este template
+    success_url = reverse_lazy('homePage')
+
+    def get_queryset(self):
+        # Apenas permitir que o autor do post exclua
+        return Post.objects.filter(user=self.request.user)
