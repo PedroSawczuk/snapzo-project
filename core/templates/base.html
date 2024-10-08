@@ -19,7 +19,7 @@
             <div class="flex items-center space-x-4">
                 <div class="text-3xl font-bold text-zinc-600">Snapzo</div>
             </div>
-    
+
             <div class="flex-grow mx-8">
                 <ul class="flex justify-center space-x-12">
                     <li>
@@ -34,7 +34,7 @@
                     </li>
                     {% if request.user.is_authenticated %}
                     <li>
-                        <a href="#" class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
+                        <a href="{% url 'notificationsPage' %}" class="flex items-center text-gray-700 text-lg hover:text-orange-700 transition-all duration-200">
                             <i class="fas fa-bell mr-2"></i> Notificações
                         </a>
                     </li>
@@ -46,7 +46,7 @@
                     {% endif %}
                 </ul>
             </div>
-    
+
             <div class="flex items-center space-x-4">
                 {% if request.user.is_authenticated %}
                 <span class="text-zinc-600 text-lg font-medium">

@@ -26,7 +26,7 @@ Explorer
             <h3 class="font-bold">Usuários Encontrados:</h3>
             {% for user in users %}
                 <div class="border-b mb-4 pb-4">
-                    <h4 class="font-bold text-blue-600">{{ user.username }}</h4>
+                    <a href="{% url 'userProfilePage' user.id %}" class="font-bold text-blue-600 hover:underline">{{ user.username }}</a>
                     <p>Usuário encontrado.</p>
                 </div>
             {% empty %}

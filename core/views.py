@@ -1,8 +1,9 @@
 from django.http import Http404, JsonResponse
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
+from django.shortcuts import get_object_or_404, render, redirect
+from django.urls import reverse, reverse_lazy
 from django.views.generic import *
 from django.contrib import messages
+from notifications.models import Notification
 from posts.models import Like, Post
 from .forms import PostForm, UserProfileForm
 from .utils.timeUtils import time_since  
@@ -126,16 +127,34 @@ class DeletePostView(LoginRequiredMixin, DeleteView):
     
 class LikePostView(LoginRequiredMixin, View):
     def post(self, request, post_id):
-        post = Post.objects.get(id=post_id)
+        post = get_object_or_404(Post, id=post_id)
         like, created = Like.objects.get_or_create(user=request.user, post=post)
+
         if not created:
-            like.delete()  # Unlike the post if it was already liked
+            like.delete()  
             action = 'unliked'
+            # Remover notificação se o like foi removido
+            Notification.objects.filter(user=post.user, post=post, message=f"{request.user.username} curtiu seu post").delete()
         else:
             action = 'liked'
-        
-        # Optionally, update like_count on the Post
-        post.like_count = post.likes.count()
+            # Criar notificação ao curtir o post
+            post_url = reverse('postDetailPage', args=[post.id])  # Certifique-se de que a URL do post está correta
+            Notification.objects.create(
+                user=post.user,
+                post=post,
+                message=f"{request.user.username} curtiu seu post",
+                post_url=post_url  # Adicione a URL do post à notificação
+            )
+
+        post.like_count = post.likes.count()  # Atualizar contagem de likes
         post.save()
         
         return JsonResponse({'action': action, 'like_count': post.like_count})
+
+class NotificationPageView(LoginRequiredMixin, ListView):
+    model = Notification
+    template_name = 'notifications/notificationsPage.html'
+    context_object_name = 'notifications'
+    
+    def get_queryset(self):
+        return Notification.objects.filter(user=self.request.user).order_by('-created_at')

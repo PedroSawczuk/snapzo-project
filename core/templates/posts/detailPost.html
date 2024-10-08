@@ -41,7 +41,7 @@ Detalhes do Post
 
 <script>
     document.getElementById('like-button').addEventListener('click', function() {
-        const postId = '{{ post.id }}';
+        const postId = '{{ post.id }}';  // Certifique-se de que este é o UUID
         fetch(`/like/${postId}/`, {
             method: 'POST',
             headers: {
@@ -56,8 +56,10 @@ Detalhes do Post
             icon.classList.toggle('fa-thumbs-up');  // Muda para o ícone de curtir
             icon.classList.toggle('fa-thumbs-o-up'); // Muda para o ícone de não curtir
             this.querySelector('span').textContent = (data.action === 'liked') ? 'Descurtir' : 'Curtir';
-        });
+        })
+        .catch(error => console.error('Erro:', error)); // Para verificar se há erros
     });
 </script>
+
 
 {% endblock main %}
