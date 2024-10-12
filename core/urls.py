@@ -14,4 +14,7 @@ urlpatterns = [
     path('like/<uuid:post_id>/', LikePostView.as_view(), name='likePost'),  
     path('notifications/', NotificationPageView.as_view(), name='notificationsPage'),
 
+    path('api/posts/', PostListView.as_view(), name='postList'),
+
+
 ]

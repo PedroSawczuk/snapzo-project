@@ -158,3 +158,17 @@ class NotificationPageView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user).order_by('-created_at')
+
+class PostListView(View):
+    def get(self, request, *args, **kwargs):
+        posts = Post.objects.all().order_by('-created_at')
+        posts_data = [
+            {
+                'id': post.id,
+                'content': post.content,
+                'username': post.user.username,
+                'time_since': time_since(post.created_at),
+            }
+            for post in posts
+        ]
+        return JsonResponse(posts_data, safe=False)

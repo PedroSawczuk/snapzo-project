@@ -15,7 +15,7 @@ Início
 {% endif %}
 
 <div class="max-w-md mx-auto my-5">
-    <form method="post" class="bg-white p-6 rounded-lg shadow-md">
+    <form method="post" id="postForm" class="bg-white p-6 rounded-lg shadow-md">
         {% csrf_token %}
         <textarea name="content" placeholder="Escreva seu post aqui..."
             class="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -25,7 +25,7 @@ Início
     </form>
 </div>
 
-<div class="max-w-md mx-auto my-5">
+<div class="max-w-md mx-auto my-5" id="postsContainer">
     <h2 class="text-2xl font-semibold mb-4">Posts Recentes</h2>
     {% for post_data in posts %}
     <a href="{% url 'postDetailPage' post_data.post.id %}" class="block"> <!-- Link para detalhes -->
@@ -41,7 +41,6 @@ Início
     {% endfor %}
 </div>
 
-
 <style>
     .text-content {
         max-width: 45ch;
@@ -51,6 +50,34 @@ Início
 </style>
 
 <script>
+    // Função para atualizar posts
+    function updatePosts() {
+        fetch('/api/posts/')
+            .then(response => response.json())
+            .then(data => {
+                const postsContainer = document.getElementById('postsContainer');
+                postsContainer.innerHTML = '<h2 class="text-2xl font-semibold mb-4">Posts Recentes</h2>'; // Reinicia a lista de posts
+
+                if (data.length > 0) {
+                    data.forEach(post => {
+                        postsContainer.innerHTML += `
+                            <a href="/posts/${post.id}/" class="block">
+                                <div class="bg-white border border-gray-300 rounded-lg shadow-md p-6 mb-4 transition-transform transform hover:scale-105">
+                                    <p class="text-lg font-bold text-blue-600">${post.username} - <span class="font-normal text-gray-500">${post.time_since}</span></p>
+                                    <p class="text-content">${post.content}</p>
+                                </div>
+                            </a>`;
+                    });
+                } else {
+                    postsContainer.innerHTML += '<p class="text-gray-500 text-center">Não há posts disponíveis.</p>';
+                }
+            });
+    }
+
+    // Configura polling a cada 5 segundos
+    setInterval(updatePosts, 5000);
+
+    // Mensagem temporária
     setTimeout(() => {
         const message = document.getElementById('message');
         if (message) {
