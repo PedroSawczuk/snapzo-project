@@ -1,11 +1,11 @@
-from django.http import Http404, JsonResponse
+from django.http import Http404, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.generic import *
 from django.contrib import messages
 from notifications.models import Notification
 from posts.models import Like, Post
-from .forms import PostForm, UserProfileForm
+from .forms import CommentForm, PostForm, UserProfileForm
 from .utils.timeUtils import time_since  
 from django.db.models import Q
 from posts.models import Post
@@ -53,7 +53,6 @@ class PostDetailView(DetailView):
         context['time_since'] = time_since(self.object.created_at)
         context['has_liked'] = self.request.user.is_authenticated and self.object.likes.filter(user=self.request.user).exists()
         return context
-
 
 class ExplorerPageView(TemplateView):
     template_name = 'explorer/explorerPage.html'
@@ -124,25 +123,30 @@ class DeletePostView(LoginRequiredMixin, DeleteView):
 class LikePostView(LoginRequiredMixin, View):
     def post(self, request, post_id):
         post = get_object_or_404(Post, id=post_id)
+
+        if not request.user.is_authenticated:
+            messages.error(request, "Você precisa estar logado para curtir este post.")
+            return JsonResponse({'error': 'not_authenticated'}, status=403)
+
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if not created:
-            like.delete()  
+            like.delete()
             action = 'unliked'
             Notification.objects.filter(user=post.user, post=post, message=f"{request.user.username} curtiu seu post").delete()
         else:
             action = 'liked'
-            post_url = reverse('postDetailPage', args=[post.id]) 
+            post_url = reverse('postDetailPage', args=[post.id])
             Notification.objects.create(
                 user=post.user,
                 post=post,
                 message=f"{request.user.username} curtiu seu post",
-                post_url=post_url  
+                post_url=post_url
             )
 
-        post.like_count = post.likes.count() 
+        post.like_count = post.likes.count()
         post.save()
-        
+
         return JsonResponse({'action': action, 'like_count': post.like_count})
 
 class NotificationPageView(LoginRequiredMixin, ListView):
@@ -166,3 +170,28 @@ class PostListView(View):
             for post in posts
         ]
         return JsonResponse(posts_data, safe=False)
+
+class PostDetailView(DetailView):
+    model = Post
+    template_name = 'posts/detailPost.html'
+    context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['time_since'] = time_since(self.object.created_at)
+        context['has_liked'] = self.request.user.is_authenticated and self.object.likes.filter(user=self.request.user).exists()
+        context['comments'] = self.object.comments.all()
+        context['comment_form'] = CommentForm()  
+        return context
+
+    def post(self, request, *args, **kwargs):
+        post = self.get_object()
+        comment_form = CommentForm(request.POST)
+        if comment_form.is_valid():
+            comment = comment_form.save(commit=False)
+            comment.user = request.user
+            comment.post = post
+            comment.save()
+            return redirect('postDetailPage', pk=post.pk) 
+
+        return self.get(request, *args, **kwargs) 

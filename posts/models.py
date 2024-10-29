@@ -47,3 +47,17 @@ class Like(models.Model):
 
     def __str__(self):
         return f"{self.user.username} liked {self.post.id}"
+
+class Comment(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
+    content = models.TextField(verbose_name='Conteúdo')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Criado em')
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = 'Comentário'
+        verbose_name_plural = 'Comentários'
+
+    def __str__(self):
+        return f"{self.user.username} comentou: {self.content[:20]}"

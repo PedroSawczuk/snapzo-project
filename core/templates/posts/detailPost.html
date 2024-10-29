@@ -5,50 +5,91 @@ Detalhes do Post
 {% endblock title %}
 
 {% block main %}
+{% if messages %}
+<div id="message"
+    class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-6 rounded-lg shadow-lg mb-4 text-center z-50">
+    {% for message in messages %}
+    <p class="text-sm font-semibold">{{ message }}</p>
+    {% endfor %}
+</div>
+{% endif %}
+
 <div class="max-w-xl mx-auto my-5 p-6 bg-white rounded-lg shadow-md">
-    <h2 class="text-3xl font-bold mb-4 text-blue-600">
+    <h2 class="text-3xl font-semibold mb-4 text-blue-600">
         <a href="{% url 'userProfilePage' post.user.id %}" class="hover:underline">
             {{ post.user.username }}
         </a>
     </h2>
-    
+
     {% if post.image %}
     <div class="mb-4">
-        <img src="{{ post.image.url }}" alt="Imagem do post" class="w-full h-auto rounded-lg">
+        <img src="{{ post.image.url }}" alt="Imagem do post" class="w-full h-auto rounded-lg shadow-sm">
     </div>
     {% endif %}
-    
+
     <p class="text-lg text-gray-800 mb-4">{{ post.content }}</p>
-    
-    <div class="border-t border-gray-300 mt-4 pt-4">
-        <p class="text-gray-500"><strong>Criado há:</strong> {{ time_since }} - {{ post.created_at|date:"d/m/Y H:i" }}</p>
-        <p class="text-gray-500"><strong>Curtidas:</strong> <span id="like-count">{{ post.like_count }}</span></p>
-        
-        <button id="like-button" class="flex items-center mt-2 bg-blue-500 text-white px-2 py-1 rounded-md hover:bg-blue-600 transition">
-            <i id="like-icon" class="fas 
-                {% if has_liked %}
-                    fa-thumbs-up
-                {% else %}
-                    fa-thumbs-o-up
-                {% endif %}
-                mr-1"></i>
-            <span class="text-sm">
-                {% if user.is_authenticated %}
+
+    <div class="border-t border-gray-300 mt-4 pt-4 flex justify-between items-center">
+        <p class="text-gray-500 text-sm">
+            <strong>Criado há:</strong> {{ time_since }} - {{ post.created_at|date:"d/m/Y H:i" }}
+        </p>
+        <div class="flex items-center space-x-3">
+            <button id="like-button"
+                class="flex items-center bg-blue-500 text-white rounded-full px-3 py-1 transition duration-200 hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400">
+                <i id="like-icon" class="fas 
                     {% if has_liked %}
-                        Descurtir
+                        fa-solid fa-heart
                     {% else %}
-                        Curtir
-                    {% endif %}
-                {% else %}
+                        fa-regular fa-heart
+                    {% endif %}"></i>
+                <span class="text-sm ml-1">
+                    {% if user.is_authenticated %}
+                    {% if has_liked %}
+                    Descurtir
+                    {% else %}
                     Curtir
-                {% endif %}
-            </span>
-        </button>
+                    {% endif %}
+                    {% else %}
+                    Curtir
+                    {% endif %}
+                </span>
+            </button>
+            <span id="like-count" class="text-black font-bold cursor-pointer hover:underline">{{ post.like_count}}</span>
+        </div>
     </div>
+
+    <div class="mt-6">
+        <h3 class="text-2xl font-bold text-gray-800 mb-4">Comentários</h3>
+        <form method="post" class="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+            {% csrf_token %}
+            <div class="mb-4">
+                <input type="text" name="content" id="{{ comment_form.content.id_for_label }}"
+                    placeholder="Escreva seu comentário..."
+                    class="border border-gray-300 rounded-lg p-2 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required>
+            </div>
+            <button type="submit"
+                class="bg-blue-600 text-white rounded-lg px-4 py-2 transition duration-200 hover:bg-blue-700">Comentar</button>
+        </form>
+    </div>
+
+    <div class="mt-4">
+        {% for comment in comments %}
+        <div class="bg-gray-50 border border-gray-300 rounded-lg p-4 mb-4 shadow-sm">
+            <p class="text-lg font-semibold text-gray-800">{{ comment.user.username }}</p>
+            <p class="text-gray-700">{{ comment.content }}</p>
+            <p class="text-gray-500 text-sm mt-1">{{ comment.created_at|date:"d/m/Y H:i" }}</p>
+        </div>
+        {% empty %}
+        <p class="text-gray-500">Nenhum comentário ainda.</p>
+        {% endfor %}
+    </div>
+
+
 </div>
 
 <script>
-    document.getElementById('like-button').addEventListener('click', function() {
+    document.getElementById('like-button').addEventListener('click', function () {
         const postId = '{{ post.id }}';
         fetch(`/like/${postId}/`, {
             method: 'POST',
@@ -57,15 +98,69 @@ Detalhes do Post
                 'Content-Type': 'application/json'
             },
         })
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('like-count').textContent = data.like_count;
-            const icon = document.getElementById('like-icon');
-            icon.classList.toggle('fa-thumbs-up');
-            icon.classList.toggle('fa-thumbs-o-up');
-            this.querySelector('span').textContent = (data.action === 'liked') ? 'Descurtir' : 'Curtir';
-        })
-        .catch(error => console.error('Erro:', error));
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Você precisa estar logado para curtir este post.');
+                }
+            })
+            .then(data => {
+                document.getElementById('like-count').textContent = data.like_count;
+                const icon = document.getElementById('like-icon');
+
+                // Atualiza o ícone e o texto com base na ação
+                if (data.action === 'liked') {
+                    icon.classList.remove('fa-regular', 'fa-heart');
+                    icon.classList.add('fa-solid', 'fa-heart');
+                    this.querySelector('span').textContent = 'Descurtir'; // Muda para Descurtir
+                } else {
+                    icon.classList.remove('fa-solid', 'fa-heart');
+                    icon.classList.add('fa-regular', 'fa-heart');
+                    this.querySelector('span').textContent = 'Curtir'; // Muda para Curtir
+                }
+            })
+            .catch(error => {
+                showMessage(error.message);
+            });
     });
+
+    function showMessage(message) {
+        const messageDiv = document.createElement('div');
+        messageDiv.id = 'message';
+        messageDiv.className = 'fixed top-0 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-6 rounded-lg shadow-lg mb-4 text-center z-50 opacity-0 transition-opacity duration-500 ease-in-out';
+        messageDiv.innerHTML = `<p class="text-sm font-semibold">${message}</p>`;
+        document.body.appendChild(messageDiv);
+
+        setTimeout(() => {
+            messageDiv.classList.remove('opacity-0');
+            messageDiv.classList.add('opacity-100');
+        }, 10);
+
+        setTimeout(() => {
+            messageDiv.classList.remove('opacity-100');
+            messageDiv.classList.add('opacity-0');
+        }, 5000);
+
+        setTimeout(() => {
+            messageDiv.remove();
+        }, 5500);
+    }
 </script>
+
+<style>
+    #message {
+        transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+    }
+
+    #message.show {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    #message.hide {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+</style>
 {% endblock main %}

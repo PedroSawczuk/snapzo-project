@@ -10,7 +10,6 @@ Editar Perfil
     <form id="editProfileForm" method="post" class="bg-white p-8 rounded-lg shadow-lg border border-gray-300">
         {% csrf_token %}
 
-        <!-- Exibir erros de validação -->
         {% if form.errors %}
             <div class="mb-4 p-4 bg-red-100 border border-red-300 text-red-600 rounded-lg">
                 <ul>
