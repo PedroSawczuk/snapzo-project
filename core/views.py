@@ -91,7 +91,6 @@ class UserProfileView(DetailView):
                 'time_since': time_since(post.created_at)  
             } for post in posts
         ]
-        # Passar o usuário autenticado para o template
         context['current_user'] = self.request.user if self.request.user.is_authenticated else None
         return context
 
@@ -118,11 +117,10 @@ class EditPostView(LoginRequiredMixin, UpdateView):
     
 class DeletePostView(LoginRequiredMixin, DeleteView):
     model = Post
-    template_name = 'posts/deletePost.html'  # Crie este template
+    template_name = 'posts/deletePost.html' 
     success_url = reverse_lazy('homePage')
 
     def get_queryset(self):
-        # Apenas permitir que o autor do post exclua
         return Post.objects.filter(user=self.request.user)
     
 class LikePostView(LoginRequiredMixin, View):
@@ -133,20 +131,18 @@ class LikePostView(LoginRequiredMixin, View):
         if not created:
             like.delete()  
             action = 'unliked'
-            # Remover notificação se o like foi removido
             Notification.objects.filter(user=post.user, post=post, message=f"{request.user.username} curtiu seu post").delete()
         else:
             action = 'liked'
-            # Criar notificação ao curtir o post
-            post_url = reverse('postDetailPage', args=[post.id])  # Certifique-se de que a URL do post está correta
+            post_url = reverse('postDetailPage', args=[post.id]) 
             Notification.objects.create(
                 user=post.user,
                 post=post,
                 message=f"{request.user.username} curtiu seu post",
-                post_url=post_url  # Adicione a URL do post à notificação
+                post_url=post_url  
             )
 
-        post.like_count = post.likes.count()  # Atualizar contagem de likes
+        post.like_count = post.likes.count() 
         post.save()
         
         return JsonResponse({'action': action, 'like_count': post.like_count})

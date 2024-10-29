@@ -16,5 +16,4 @@ urlpatterns = [
 
     path('api/posts/', PostListView.as_view(), name='postList'),
 
-
 ]

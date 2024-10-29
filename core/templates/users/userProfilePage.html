@@ -5,7 +5,6 @@ Perfil de {{ user.username }} | Snapzo
 {% endblock title %}
 
 {% block main %}
-<!-- Mensagem de feedback -->
 {% if messages %}
 <div id="message"
     class="fixed top-0 left-1/2 transform -translate-x-1/2 bg-red-600 text-white p-6 rounded-lg shadow-lg mb-4 text-center z-50">
@@ -16,12 +15,11 @@ Perfil de {{ user.username }} | Snapzo
 {% endif %}
 
 <div class="max-w-md mx-auto my-5">
-    <!-- Informações do Usuário -->
     <div class="bg-white shadow rounded-lg p-6 mb-6">
         <div class="flex items-center space-x-6">
             <div
                 class="w-24 h-24 bg-gray-200 rounded-full flex items-center justify-center text-gray-500 text-2xl font-semibold">
-                {{ user.username|slice:":1" }} <!-- Inicial do nome do usuário -->
+                {{ user.username|slice:":1" }}
             </div>
             <div>
                 <h1 class="text-3xl font-semibold text-gray-800">{{ user.username }}</h1>
@@ -30,20 +28,11 @@ Perfil de {{ user.username }} | Snapzo
                     <span class="font-bold">{{ post_count }}</span> Posts publicados
                 </p>
 
-                <!-- Botões "Editar perfil" ou "Seguir" -->
                 {% if user == request.user %}
                 <a href="{% url 'editProfilePage' %}"
                     class="bg-blue-500 text-white px-4 py-2 rounded-lg mt-4 inline-block hover:bg-blue-600 transition">
                     Editar perfil
                 </a>
-                {% else %}
-                <form action="#" method="post">
-                    {% csrf_token %}
-                    <button type="submit"
-                        class="bg-green-500 text-white px-4 py-2 rounded-lg mt-4 inline-block hover:bg-green-600 transition">
-                        Seguir
-                    </button>
-                </form>
                 {% endif %}
             </div>
         </div>
@@ -54,7 +43,7 @@ Perfil de {{ user.username }} | Snapzo
     <h2 class="text-2xl font-semibold mb-4">Posts Recentes</h2>
     {% for post_data in posts %}
     <div class="bg-white border border-gray-300 rounded-lg shadow-md p-6 mb-4">
-        <a href="{% url 'postDetailPage' post_data.post.id %}" class="block mb-2"> 
+        <a href="{% url 'postDetailPage' post_data.post.id %}" class="block mb-2">
             <p class="text-lg font-bold text-blue-600">{{ post_data.post.user.username }} -
                 <span class="font-normal text-gray-500">{{ post_data.time_since }}</span>
             </p>
@@ -74,7 +63,7 @@ Perfil de {{ user.username }} | Snapzo
             </form>
         </div>
         {% endif %}
-        
+
     </div>
     {% empty %}
     <p class="text-gray-500 text-center">Não há posts disponíveis.</p>

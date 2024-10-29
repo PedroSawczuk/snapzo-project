@@ -60,8 +60,8 @@
             <div class="hidden lg:flex items-center space-x-4">
                 {% if request.user.is_authenticated %}
                 <span class="text-zinc-600 text-lg font-medium">
-                    <a href="{% url 'userProfilePage' request.user.id %}" class="hover:text-orange-700">{{
-                        request.user.username }}</a>
+                    <a href="{% url 'userProfilePage' request.user.id %}"
+                        class="hover:text-orange-700">{{request.user.username }}</a>
                 </span>
                 <form action="{% url 'logoutPage' %}" method="post">
                     {% csrf_token %}
@@ -108,8 +108,8 @@
             <div class="p-4 border-t mt-4">
                 {% if request.user.is_authenticated %}
                 <span class="block text-zinc-600 text-lg font-medium mb-2">
-                    <a href="{% url 'userProfilePage' request.user.id %}" class="hover:text-orange-700">{{
-                        request.user.username }}</a>
+                    <a href="{% url 'userProfilePage' request.user.id %}"
+                        class="hover:text-orange-700">{{request.user.username }}</a>
                 </span>
                 <form action="{% url 'logoutPage' %}" method="post">
                     {% csrf_token %}

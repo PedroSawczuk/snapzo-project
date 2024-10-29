@@ -19,8 +19,8 @@ class Post(models.Model):
         verbose_name='Status'
     )
     
-    view_count = models.PositiveIntegerField(default=0, verbose_name='Visualizações')  # Padrão 0
-    like_count = models.PositiveIntegerField(default=0, verbose_name='Curtidas')      # Padrão 0
+    view_count = models.PositiveIntegerField(default=0, verbose_name='Visualizações')  
+    like_count = models.PositiveIntegerField(default=0, verbose_name='Curtidas')      
 
     def post_image_path(instance, filename):
         return f'posts_images/{instance.user.username}/{slugify(filename)}'
