@@ -44,9 +44,14 @@ Perfil de {{ user.username }} | Snapzo
     {% for post_data in posts %}
     <div class="bg-white border border-gray-300 rounded-lg shadow-md p-6 mb-4">
         <a href="{% url 'postDetailPage' post_data.post.id %}" class="block mb-2">
-            <p class="text-lg font-bold text-blue-600">{{ post_data.post.user.username }} -
+            <p class="text-lg font-bold text-blue-600">{{ post_data.post.user.username }} - 
                 <span class="font-normal text-gray-500">{{ post_data.time_since }}</span>
             </p>
+            {% if post_data.post.image %}
+            <div class="mb-2">
+                <img src="{{ post_data.post.image.url }}" alt="Imagem do post" class="w-full h-auto rounded-lg">
+            </div>
+            {% endif %}
             <p class="text-content">{{ post_data.post.content }}</p>
         </a>
 
@@ -63,7 +68,6 @@ Perfil de {{ user.username }} | Snapzo
             </form>
         </div>
         {% endif %}
-
     </div>
     {% empty %}
     <p class="text-gray-500 text-center">Não há posts disponíveis.</p>

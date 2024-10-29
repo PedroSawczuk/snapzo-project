@@ -18,9 +18,6 @@ class HomePageView(ListView):
     context_object_name = 'posts'
     ordering = ['-created_at']
 
-    def get_queryset(self):
-        return Post.objects.all()
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = PostForm()
@@ -35,14 +32,15 @@ class HomePageView(ListView):
     def post(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             messages.error(request, "Você precisa estar autenticado para fazer um post.")
-            return redirect('homePage') 
+            return redirect('homePage')
 
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES) 
         if form.is_valid():
             post = form.save(commit=False)
-            post.user = request.user  
+            post.user = request.user
             post.save()
             return redirect('homePage')
+
         return self.get(request, *args, **kwargs)
     
 class PostDetailView(DetailView):

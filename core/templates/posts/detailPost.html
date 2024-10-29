@@ -11,7 +11,15 @@ Detalhes do Post
             {{ post.user.username }}
         </a>
     </h2>
+    
+    {% if post.image %}
+    <div class="mb-4">
+        <img src="{{ post.image.url }}" alt="Imagem do post" class="w-full h-auto rounded-lg">
+    </div>
+    {% endif %}
+    
     <p class="text-lg text-gray-800 mb-4">{{ post.content }}</p>
+    
     <div class="border-t border-gray-300 mt-4 pt-4">
         <p class="text-gray-500"><strong>Criado há:</strong> {{ time_since }} - {{ post.created_at|date:"d/m/Y H:i" }}</p>
         <p class="text-gray-500"><strong>Curtidas:</strong> <span id="like-count">{{ post.like_count }}</span></p>
@@ -41,7 +49,7 @@ Detalhes do Post
 
 <script>
     document.getElementById('like-button').addEventListener('click', function() {
-        const postId = '{{ post.id }}';  // Certifique-se de que este é o UUID
+        const postId = '{{ post.id }}';
         fetch(`/like/${postId}/`, {
             method: 'POST',
             headers: {
@@ -53,13 +61,11 @@ Detalhes do Post
         .then(data => {
             document.getElementById('like-count').textContent = data.like_count;
             const icon = document.getElementById('like-icon');
-            icon.classList.toggle('fa-thumbs-up');  // Muda para o ícone de curtir
-            icon.classList.toggle('fa-thumbs-o-up'); // Muda para o ícone de não curtir
+            icon.classList.toggle('fa-thumbs-up');
+            icon.classList.toggle('fa-thumbs-o-up');
             this.querySelector('span').textContent = (data.action === 'liked') ? 'Descurtir' : 'Curtir';
         })
-        .catch(error => console.error('Erro:', error)); // Para verificar se há erros
+        .catch(error => console.error('Erro:', error));
     });
 </script>
-
-
 {% endblock main %}
